@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Spain 2026">
+<title>Spain 2026 — Matt & Joey</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --navy:#1a3a6b;--blue:#2d6a9f;
+  --red:#c0392b;--green:#1e7e34;--amber:#d97706;--purple:#7c3aed;
+  --bg:#f5f5f7;--surface:#ffffff;--border:rgba(0,0,0,0.1);
+  --text:#1c1c1e;--text2:#6b7280;--text3:#9ca3af;
+  --safe-top:env(safe-area-inset-top,0px);
+  --safe-bot:env(safe-area-inset-bottom,0px);
+}
+@media(prefers-color-scheme:dark){
+  :root{
+    --bg:#000;--surface:#1c1c1e;--border:rgba(255,255,255,0.1);
+    --text:#f5f5f7;--text2:#8e8e93;--text3:#636366;
+  }
+}
+html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text',sans-serif}
+body{background:var(--bg);color:var(--text);display:flex;flex-direction:column}
+
+/* HEADER */
+.app-header{
+  background:var(--navy);
+  padding:calc(var(--safe-top) + 12px) 20px 14px;
+  flex-shrink:0;
+}
+.app-header-sub{font-size:11px;color:rgba(255,255,255,0.55);letter-spacing:.8px;text-transform:uppercase;margin-bottom:3px}
+.app-header-title{font-size:20px;font-weight:600;color:#fff;letter-spacing:-.3px}
+.app-header-sub2{font-size:12px;color:rgba(255,255,255,0.5);margin-top:2px}
+
+/* NAV TABS */
+.nav-tabs{
+  display:flex;background:var(--surface);
+  border-bottom:0.5px solid var(--border);
+  overflow-x:auto;-webkit-overflow-scrolling:touch;
+  scrollbar-width:none;flex-shrink:0;
+  padding:0 4px;
+}
+.nav-tabs::-webkit-scrollbar{display:none}
+.tab{
+  flex-shrink:0;padding:10px 14px;font-size:12px;font-weight:500;
+  color:var(--text2);border:none;background:none;cursor:pointer;
+  border-bottom:2px solid transparent;transition:all .15s;white-space:nowrap;
+}
+.tab.active{color:var(--navy);border-bottom-color:var(--navy)}
+@media(prefers-color-scheme:dark){.tab.active{color:#5b9bd5;border-bottom-color:#5b9bd5}}
+
+/* SCROLL AREA */
+.scroll-area{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:0 0 calc(var(--safe-bot) + 80px)}
+
+/* DAY VIEW */
+.day-view{display:none;padding:12px 16px}
+.day-view.active{display:block}
+
+/* WARNING BANNER */
+.warn-banner{
+  background:#fff8e6;border:1px solid #fbbf24;border-radius:12px;
+  padding:10px 13px;font-size:13px;color:#92400e;margin-bottom:12px;
+  line-height:1.5;display:flex;gap:8px;align-items:flex-start;
+}
+.warn-banner .wi{flex-shrink:0;font-size:15px;margin-top:0px}
+@media(prefers-color-scheme:dark){.warn-banner{background:#3d2600;border-color:#92400e;color:#fac775}}
+
+/* SECTION */
+.section-label{
+  font-size:11px;font-weight:600;letter-spacing:.7px;text-transform:uppercase;
+  color:var(--text3);margin:14px 0 7px;padding-left:4px;
+}
+
+/* SCHEDULE ITEMS */
+.sched-item{
+  display:flex;gap:12px;align-items:flex-start;
+  padding:9px 13px;background:var(--surface);
+  border-radius:12px;margin-bottom:6px;
+  border:0.5px solid var(--border);
+}
+.sched-time{
+  font-size:11px;font-weight:500;color:var(--text3);
+  width:46px;flex-shrink:0;padding-top:2px;
+  font-variant-numeric:tabular-nums;
+}
+.sched-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;margin-top:4px}
+.sched-content{flex:1;min-width:0}
+.sched-title{font-size:14px;font-weight:500;color:var(--text);line-height:1.3}
+.sched-sub{font-size:12px;color:var(--text2);margin-top:2px;line-height:1.4}
+
+/* MATCH CARD */
+.match-card{
+  border-radius:14px;padding:14px;margin-bottom:10px;
+  background:linear-gradient(135deg,#c0392b,#e74c3c);
+  color:#fff;
+}
+.match-vs{font-size:11px;font-weight:600;letter-spacing:.6px;opacity:.8;text-transform:uppercase;margin-bottom:6px}
+.match-teams{font-size:17px;font-weight:700;line-height:1.2;margin-bottom:8px}
+.match-meta{font-size:12px;opacity:.8;line-height:1.5}
+
+/* INFO CARDS */
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.info-card{
+  background:var(--surface);border-radius:12px;padding:12px;
+  border:0.5px solid var(--border);
+}
+.info-card-label{font-size:10px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:var(--text3);margin-bottom:4px}
+.info-card-value{font-size:14px;font-weight:500;color:var(--text);line-height:1.3}
+.info-card-sub{font-size:11px;color:var(--text2);margin-top:2px}
+
+/* HOTEL CARD */
+.hotel-card{
+  background:var(--surface);border-radius:14px;padding:13px;
+  border:0.5px solid var(--border);margin-bottom:10px;
+  display:flex;gap:10px;align-items:flex-start;
+}
+.hotel-icon{
+  width:38px;height:38px;border-radius:10px;background:#f3f0fb;
+  display:flex;align-items:center;justify-content:center;font-size:18px;
+  flex-shrink:0;
+}
+@media(prefers-color-scheme:dark){.hotel-icon{background:#2d1f4a}}
+.hotel-name{font-size:14px;font-weight:600;color:var(--text)}
+.hotel-addr{font-size:12px;color:var(--text2);margin-top:2px}
+.hotel-phone{font-size:12px;color:#2d6a9f;margin-top:3px;font-weight:500}
+
+/* RESTAURANT CARDS */
+.rest-card{
+  background:var(--surface);border-radius:12px;padding:11px 13px;
+  border:0.5px solid var(--border);margin-bottom:6px;
+  border-left:3px solid var(--green);
+}
+.rest-name{font-size:13px;font-weight:600;color:var(--text)}
+.rest-desc{font-size:12px;color:var(--text2);margin-top:2px}
+.rest-addr{font-size:11px;color:var(--text3);margin-top:2px}
+
+/* DRIVE CARD */
+.drive-card{
+  background:var(--surface);border-radius:12px;padding:11px 13px;
+  border:0.5px solid var(--border);margin-bottom:6px;
+  display:flex;justify-content:space-between;align-items:center;
+}
+.drive-route{font-size:13px;font-weight:500;color:var(--text)}
+.drive-time{font-size:13px;font-weight:600;color:var(--blue)}
+
+/* EMERGENCY */
+.emerg-card{
+  background:var(--surface);border-radius:12px;padding:11px 13px;
+  border:0.5px solid var(--border);margin-bottom:6px;
+  display:flex;gap:10px;align-items:center;
+}
+.emerg-icon{font-size:20px;flex-shrink:0}
+.emerg-label{font-size:12px;font-weight:600;color:var(--text)}
+.emerg-num{font-size:13px;color:#2d6a9f;font-weight:500;margin-top:1px}
+.emerg-detail{font-size:11px;color:var(--text3);margin-top:1px}
+
+/* BOTTOM NAV */
+.bottom-nav{
+  position:fixed;bottom:0;left:0;right:0;
+  background:rgba(255,255,255,0.92);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border-top:0.5px solid var(--border);
+  display:flex;padding:8px 0 calc(var(--safe-bot) + 4px);
+  z-index:100;
+}
+@media(prefers-color-scheme:dark){.bottom-nav{background:rgba(28,28,30,0.92)}}
+.bnav-btn{
+  flex:1;display:flex;flex-direction:column;align-items:center;
+  gap:3px;border:none;background:none;cursor:pointer;
+  font-size:10px;font-weight:500;color:var(--text3);padding:0;
+}
+.bnav-btn.active{color:var(--navy)}
+@media(prefers-color-scheme:dark){.bnav-btn.active{color:#5b9bd5}}
+.bnav-icon{font-size:22px;line-height:1}
+
+/* OVERVIEW PAGE */
+.overview-day{
+  background:var(--surface);border-radius:14px;padding:13px 15px;
+  margin-bottom:8px;border:0.5px solid var(--border);
+  border-left:4px solid var(--navy);
+  cursor:pointer;active:opacity:.7;
+  display:flex;align-items:center;gap:12px;
+}
+.overview-day:active{opacity:.7}
+.ov-date{font-size:11px;font-weight:600;color:var(--text2);width:52px;flex-shrink:0}
+.ov-content{flex:1;min-width:0}
+.ov-title{font-size:14px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ov-pills{display:flex;gap:4px;margin-top:4px;flex-wrap:wrap}
+.pill{font-size:10px;font-weight:600;padding:2px 7px;border-radius:99px;letter-spacing:.1px}
+.pill-m{background:#fdecea;color:#c0392b}
+.pill-t{background:#e8f4fd;color:#1a3a6b}
+.pill-f{background:#edf7ee;color:#1e7e34}
+.pill-w{background:#fff8e6;color:#b45309}
+.pill-h{background:#f3f0fb;color:#7c3aed}
+@media(prefers-color-scheme:dark){
+  .pill-m{background:#4a1515;color:#f09595}
+  .pill-t{background:#0c2540;color:#85b7eb}
+  .pill-f{background:#0d3318;color:#97c459}
+  .pill-w{background:#3d2600;color:#fac775}
+  .pill-h{background:#2d1f4a;color:#c4b5fd}
+}
+.ov-arrow{color:var(--text3);font-size:16px;flex-shrink:0}
+
+/* CONTACTS PAGE */
+.contacts-page{padding:12px 16px}
+</style>
+</head>
+<body>
+
+<div class="app-header">
+  <div class="app-header-sub">Pateadores MIC 2026 · Costa Brava</div>
+  <div class="app-header-title">🇪🇸 Spain Trip 2026</div>
+  <div class="app-header-sub2">Matt & Joey · Mar 28 – Apr 6</div>
+</div>
+
+<!-- NAV TABS (shown on schedule page) -->
+<div class="nav-tabs" id="dayTabs" style="display:none">
+  <button class="tab active" onclick="showDay(0)">Sat 28</button>
+  <button class="tab" onclick="showDay(1)">Sun 29</button>
+  <button class="tab" onclick="showDay(2)">Mon 30</button>
+  <button class="tab" onclick="showDay(3)">Tue 31</button>
+  <button class="tab" onclick="showDay(4)">Wed 1</button>
+  <button class="tab" onclick="showDay(5)">Thu 2</button>
+  <button class="tab" onclick="showDay(6)">Fri 3</button>
+  <button class="tab" onclick="showDay(7)">Sat 4</button>
+  <button class="tab" onclick="showDay(8)">Sun 5</button>
+  <button class="tab" onclick="showDay(9)">Mon 6</button>
+</div>
+
+<div class="scroll-area">
+
+<!-- ========== OVERVIEW PAGE ========== -->
+<div id="page-overview" style="padding:12px 16px">
+  <div class="section-label">All 10 Days</div>
+  <div id="overviewList"></div>
+</div>
+
+<!-- ========== SCHEDULE PAGE ========== -->
+<div id="page-schedule" style="display:none">
+  <div id="day0" class="day-view active"></div>
+  <div id="day1" class="day-view"></div>
+  <div id="day2" class="day-view"></div>
+  <div id="day3" class="day-view"></div>
+  <div id="day4" class="day-view"></div>
+  <div id="day5" class="day-view"></div>
+  <div id="day6" class="day-view"></div>
+  <div id="day7" class="day-view"></div>
+  <div id="day8" class="day-view"></div>
+  <div id="day9" class="day-view"></div>
+</div>
+
+<!-- ========== CONTACTS PAGE ========== -->
+<div id="page-contacts" style="display:none">
+<div class="contacts-page">
+  <div class="section-label">Emergency</div>
+  <div class="emerg-card"><div class="emerg-icon">🚨</div><div><div class="emerg-label">Spain Emergency</div><div class="emerg-num">112</div><div class="emerg-detail">Police · Fire · Ambulance — save as "Spain Emergency 112"</div></div></div>
+  <div class="section-label">Hotels</div>
+  <div class="emerg-card"><div class="emerg-icon">🏨</div><div><div class="emerg-label">Hotel Flora Park</div><div class="emerg-num">+34 936 36 19 90</div><div class="emerg-detail">Castelldefels · Mar 29–31 & Apr 5–6</div></div></div>
+  <div class="emerg-card"><div class="emerg-icon">🏨</div><div><div class="emerg-label">Hotel Medes II</div><div class="emerg-num">+34 972 75 08 80</div><div class="emerg-detail">L'Estartit · Mar 31 – Apr 5</div></div></div>
+  <div class="section-label">Insurance & Car</div>
+  <div class="emerg-card"><div class="emerg-icon">🛡️</div><div><div class="emerg-label">Allianz Insurance</div><div class="emerg-num">1-804-281-5700 (collect)</div><div class="emerg-detail">Policy: EUSP2558655423</div></div></div>
+  <div class="emerg-card"><div class="emerg-icon">🚗</div><div><div class="emerg-label">Avis Car Rental</div><div class="emerg-num">1-877-4-A-VACATION</div><div class="emerg-detail">Conf: 04853766US1</div></div></div>
+  <div class="section-label">Airlines & Bank</div>
+  <div class="emerg-card"><div class="emerg-icon">✈️</div><div><div class="emerg-label">British Airways</div><div class="emerg-num">1-800-247-9297</div><div class="emerg-detail">24/7 · Booking: XCGIF9</div></div></div>
+  <div class="emerg-card"><div class="emerg-icon">💳</div><div><div class="emerg-label">Wells Fargo</div><div class="emerg-num">1-925-825-7600 (collect)</div><div class="emerg-detail">Lost card: 1-800-869-3557</div></div></div>
+  <div class="section-label">Consulates</div>
+  <div class="emerg-card"><div class="emerg-icon">🇬🇧</div><div><div class="emerg-label">UK Consulate Barcelona</div><div class="emerg-num">+34 93 366 6200</div><div class="emerg-detail">Avda Diagonal 477, Barcelona</div></div></div>
+  <div class="emerg-card"><div class="emerg-icon">🇺🇸</div><div><div class="emerg-label">US Consulate Barcelona</div><div class="emerg-num">+34 93 280 2227</div><div class="emerg-detail">After hours 24/7: +34 91 587 2200</div></div></div>
+  <div class="section-label">Booking References</div>
+  <div class="info-grid">
+    <div class="info-card"><div class="info-card-label">Flights</div><div class="info-card-value">XCGIF9</div><div class="info-card-sub">British Airways</div></div>
+    <div class="info-card"><div class="info-card-label">Car Rental</div><div class="info-card-value">04853766US1</div><div class="info-card-sub">Avis</div></div>
+    <div class="info-card"><div class="info-card-label">Insurance</div><div class="info-card-value">EUSP2558655423</div><div class="info-card-sub">Allianz</div></div>
+    <div class="info-card"><div class="info-card-label">Joey Passport</div><div class="info-card-value">UK + US</div><div class="info-card-sub">Use US at LAX return</div></div>
+  </div>
+</div>
+</div>
+
+</div><!-- end scroll-area -->
+
+<!-- BOTTOM NAV -->
+<div class="bottom-nav">
+  <button class="bnav-btn active" id="bnav-overview" onclick="showPage('overview')">
+    <span class="bnav-icon">📅</span>Overview
+  </button>
+  <button class="bnav-btn" id="bnav-schedule" onclick="showPage('schedule')">
+    <span class="bnav-icon">🗓️</span>Schedule
+  </button>
+  <button class="bnav-btn" id="bnav-contacts" onclick="showPage('contacts')">
+    <span class="bnav-icon">📞</span>Contacts
+  </button>
+</div>
+
+<script>
+const DAYS=[
+  {
+    num:"Day 0",date:"Sat 28 Mar",title:"Departure — LAX",
+    stripe:"#1a3a6b",pills:[{c:"pill-t",l:"Flights"}],
+    warn:"Today is the day! BA4747 departs 7:46am — be at LAX by 6am.",
+    hotel:null,
+    matches:[],
+    drives:[],
+    rests:[],
+    items:[
+      {time:"5:30am",col:"#1a3a6b",t:"Leave for LAX",s:"Allow plenty of time"},
+      {time:"6:00am",col:"#1a3a6b",t:"Check in — Terminal B",s:"British Airways"},
+      {time:"7:46am",col:"#c0392b",t:"BA4747 LAX → Dallas DFW",s:"Arrives 12:56pm"},
+      {time:"2:40pm",col:"#c0392b",t:"BA1648 Dallas → Barcelona",s:"Overnight — arrives 7:35am Sunday"},
+      {time:"",col:"#1e7e34",t:"Sleep on the plane!",s:"Long overnight — Joey will need rest"},
+    ]
+  },
+  {
+    num:"Day 1",date:"Sun 29 Mar",title:"Arrive Barcelona",
+    stripe:"#1a3a6b",pills:[{c:"pill-t",l:"Arrive"},{c:"pill-h",l:"Hotel 1"}],
+    warn:"Palm Sunday · Semana Santa begins · EES biometrics at border — allow extra time",
+    hotel:{name:"Hotel Flora Park",addr:"Av. de la Constitució 44, Castelldefels",phone:"+34 936 36 19 90"},
+    matches:[],
+    drives:[{r:"Airport T1 → Hotel Flora Park",t:"25 min"}],
+    rests:[
+      {n:"Barba Rossa Beach Bar ⭐4.4",d:"American burgers — great first night!",a:"Pg. Marítim 209, Castelldefels"},
+      {n:"Ananda Beach House ⭐4.5",d:"Mediterranean beachfront",a:"Pg. Marítim 45, Castelldefels"},
+    ],
+    items:[
+      {time:"7:35am",col:"#1a3a6b",t:"Land Barcelona T1",s:"Follow signs to Avis"},
+      {time:"7:35am",col:"#1a3a6b",t:"Pick up Avis VW Taigo",s:"Decline CDW · Physical WF card · €200 deposit · Inspect car"},
+      {time:"9:00am",col:"#1a3a6b",t:"Drive to Hotel Flora Park",s:"25 min via AP-7 — no tolls"},
+      {time:"10:00am",col:"#1e7e34",t:"FREE TIME — Explore Castelldefels",s:"Beach or Castillo de Castelldefels — great for Joey!"},
+      {time:"4:00pm",col:"#7c3aed",t:"Hotel Flora Park check-in",s:"Check-in after 4pm"},
+      {time:"8:00pm",col:"#6b7280",t:"Dinner",s:"See restaurants below"},
+    ]
+  },
+  {
+    num:"Day 2",date:"Mon 30 Mar",title:"FC Barcelona + Scrimmage",
+    stripe:"#c0392b",pills:[{c:"pill-m",l:"Scrimmage"},{c:"pill-t",l:"Bus day"}],
+    warn:null,
+    hotel:{name:"Hotel Flora Park",addr:"Av. de la Constitució 44, Castelldefels",phone:"+34 936 36 19 90"},
+    matches:[{vs:"Scrimmage vs CE Hospitalet",time:"5:30pm",venue:"Estadi Municipal de Futbol de L'Hospitalet",addr:"Carrer de la Feixa Llarga 24, L'Hospitalet de Llobregat"}],
+    drives:[{r:"Hotel Flora Park → L'Hospitalet",t:"~25 min"}],
+    rests:[{n:"Hotel Flora Park Restaurant",d:"Team dinner included",a:"On site"}],
+    items:[
+      {time:"8:00am",col:"#6b7280",t:"Breakfast — Hotel Flora Park",s:"Team arranged"},
+      {time:"9:00am",col:"#1a3a6b",t:"Bus — FC Barcelona Experience",s:"Camp Nou, Les Corts 08028 Barcelona"},
+      {time:"1:30pm",col:"#6b7280",t:"Lunch — Hotel Flora Park",s:"Team arranged"},
+      {time:"4:00pm",col:"#1a3a6b",t:"Bus departs to match",s:""},
+      {time:"5:30pm",col:"#c0392b",t:"SCRIMMAGE vs CE Hospitalet",s:"Estadi Municipal de Futbol de L'Hospitalet"},
+      {time:"8:30pm",col:"#6b7280",t:"Dinner — Hotel Flora Park",s:"Team arranged"},
+    ]
+  },
+  {
+    num:"Day 3",date:"Tue 31 Mar",title:"Barcelona Tour → L'Estartit",
+    stripe:"#7c3aed",pills:[{c:"pill-t",l:"Transfer"},{c:"pill-h",l:"Hotel 2"}],
+    warn:null,
+    hotel:{name:"Hotel Medes II",addr:"Guillem de Montgrí 38, L'Estartit",phone:"+34 972 75 08 80"},
+    matches:[],
+    drives:[{r:"Hotel Flora Park → Hotel Medes II",t:"1hr 40min via AP-7"}],
+    rests:[{n:"Hotel Medes II Restaurant",d:"Team dinner included",a:"On site"}],
+    items:[
+      {time:"7:00am",col:"#6b7280",t:"Breakfast — Hotel Flora Park",s:""},
+      {time:"8:30am",col:"#1a3a6b",t:"Bus — Barcelona City Tour",s:"Sagrada Família · Gothic Quarter · Las Ramblas"},
+      {time:"1:30pm",col:"#6b7280",t:"Lunch — Hotel Flora Park",s:"Team arranged"},
+      {time:"3:00pm",col:"#1a3a6b",t:"Bus departs to L'Estartit",s:"Or drive — 1hr 40min via AP-7"},
+      {time:"5:00pm",col:"#7c3aed",t:"Check-in Hotel Medes II",s:"Tournament base! Check-in from 5pm"},
+      {time:"8:00pm",col:"#6b7280",t:"Dinner — Hotel Medes II",s:"Early night — tournament tomorrow!"},
+    ]
+  },
+  {
+    num:"Day 4",date:"Wed 1 Apr",title:"Opening Ceremony + Real Madrid",
+    stripe:"#c0392b",pills:[{c:"pill-m",l:"Match 1"},{c:"pill-w",l:"Big day!"}],
+    warn:"Opening Ceremony Figueres 11am · Match vs Real Madrid 6pm L'Escala · Park early!",
+    hotel:{name:"Hotel Medes II",addr:"Guillem de Montgrí 38, L'Estartit",phone:"+34 972 75 08 80"},
+    matches:[{vs:"Pateadores vs Real Madrid CF",time:"6:00pm",venue:"L'Escala",addr:"Carrer Àncora s/n, 17130 L'Escala"}],
+    drives:[{r:"Hotel Medes II → Figueres (ceremony)",t:"35 min"},{r:"Hotel Medes II → L'Escala (match)",t:"20 min"}],
+    rests:[
+      {n:"Corb Marí ⭐4.7",d:"Post-match tapas & seafood · walk-ins",a:"Passeig Molinet 7"},
+      {n:"Fleming's ⭐4.8",d:"Joey-friendly · nuggets · pasta",a:"Plaça Dr. Fleming 8 · Wed–Sun"},
+    ],
+    items:[
+      {time:"7:00am",col:"#6b7280",t:"Breakfast — Hotel Medes II",s:"Match day — fuel up!"},
+      {time:"9:30am",col:"#1a3a6b",t:"Bus — Opening Ceremony Figueres",s:"Estadi Municipal de Vilatenim"},
+      {time:"11:00am",col:"#1a3a6b",t:"MIC Football 2026 Opening Ceremony",s:"464 teams from 50+ countries!"},
+      {time:"2:00pm",col:"#6b7280",t:"Lunch — Hotel Medes II",s:"Team arranged"},
+      {time:"4:30pm",col:"#1a3a6b",t:"Depart to L'Escala",s:"Leave early · park early"},
+      {time:"6:00pm",col:"#c0392b",t:"MATCH 1 — Real Madrid CF vs Pateadores",s:"Carrer Àncora s/n, L'Escala"},
+      {time:"8:00pm",col:"#6b7280",t:"Dinner",s:"See restaurants below"},
+    ]
+  },
+  {
+    num:"Day 5",date:"Thu 2 Apr",title:"Double Match Day",
+    stripe:"#c0392b",pills:[{c:"pill-m",l:"Match 2"},{c:"pill-m",l:"Match 3"},{c:"pill-w",l:"Stock up!"}],
+    warn:"STOCK UP TODAY — Good Friday tomorrow = ALL shops & supermarkets CLOSED.",
+    hotel:{name:"Hotel Medes II",addr:"Guillem de Montgrí 38, L'Estartit",phone:"+34 972 75 08 80"},
+    matches:[
+      {vs:"Pateadores vs CS Interstar 🇨🇭",time:"12:00pm",venue:"L'Escala",addr:"Carrer Àncora s/n, L'Escala"},
+      {vs:"Pateadores vs Team Next Norway 🇳🇴",time:"7:00pm",venue:"Jafre",addr:"Carrer Padro 4, 17143 Jafre · bring layers!"},
+    ],
+    drives:[
+      {r:"Hotel Medes II → L'Escala",t:"20 min"},
+      {r:"L'Escala → Hotel Medes II",t:"20 min"},
+      {r:"Hotel Medes II → Jafre",t:"15 min"},
+    ],
+    rests:[
+      {n:"Corb Marí ⭐4.7",d:"Best post-match tapas",a:"Passeig Molinet 7"},
+      {n:"Fleming's ⭐4.8",d:"Joey's favourite — nuggets!",a:"Plaça Dr. Fleming 8"},
+      {n:"Mr Taco",d:"Kids menu ~€7.50",a:"Carrer d'Eivissa 60"},
+    ],
+    items:[
+      {time:"7:00am",col:"#6b7280",t:"Breakfast — Hotel Medes II",s:""},
+      {time:"10:30am",col:"#1a3a6b",t:"Bus departs to L'Escala",s:"20 min drive"},
+      {time:"12:00pm",col:"#c0392b",t:"MATCH 2 — vs CS Interstar 🇨🇭",s:"Carrer Àncora s/n, L'Escala"},
+      {time:"2:00pm",col:"#1e7e34",t:"FREE TIME — Lunch at Hotel Medes II",s:"Get Joey back · rest · hydrate"},
+      {time:"5:30pm",col:"#1a3a6b",t:"Bus departs to Jafre",s:"15 min drive"},
+      {time:"7:00pm",col:"#c0392b",t:"MATCH 3 — vs Team Next Norway 🇳🇴",s:"Jafre · bring layers!"},
+      {time:"9:00pm",col:"#6b7280",t:"Dinner",s:"See restaurants below"},
+    ]
+  },
+  {
+    num:"Day 6",date:"Fri 3 Apr",title:"Good Friday + Knockouts",
+    stripe:"#d97706",pills:[{c:"pill-m",l:"Knockouts?"},{c:"pill-w",l:"Closed!"}],
+    warn:"GOOD FRIDAY — All shops closed. Restaurants only. Hopefully you stocked up yesterday!",
+    hotel:{name:"Hotel Medes II",addr:"Guillem de Montgrí 38, L'Estartit",phone:"+34 972 75 08 80"},
+    matches:[{vs:"Knockout Round (if qualified)",time:"TBD",venue:"Check MIC Football app",addr:"Check team WhatsApp for schedule"}],
+    drives:[],
+    rests:[
+      {n:"Hotel Medes II Restaurant",d:"Best bet today — guaranteed open",a:"On site"},
+      {n:"Corb Marí ⭐4.7",d:"Call to confirm — usually open",a:"Passeig Molinet 7"},
+      {n:"Fleming's ⭐4.8",d:"Wed–Sun — should be open",a:"Plaça Dr. Fleming 8"},
+    ],
+    items:[
+      {time:"7:00am",col:"#6b7280",t:"Breakfast — Hotel Medes II",s:""},
+      {time:"TBD",col:"#c0392b",t:"MATCH — Knockout Round if qualified",s:"Check MIC Football app / team WhatsApp"},
+      {time:"TBD",col:"#1e7e34",t:"FREE TIME — Lunch at Hotel Medes II",s:"Team arranged"},
+      {time:"TBD",col:"#6b7280",t:"Dinner",s:"Hotel Medes II · Corb Marí · Fleming's"},
+      {time:"",col:"#1e7e34",t:"Walk the L'Estartit waterfront",s:"Easter processions in nearby towns — beautiful!"},
+    ]
+  },
+  {
+    num:"Day 7",date:"Sat 4 Apr",title:"Knockouts or Free Day",
+    stripe:"#1e7e34",pills:[{c:"pill-m",l:"Knockouts?"},{c:"pill-f",l:"Free day?"}],
+    warn:null,
+    hotel:{name:"Hotel Medes II",addr:"Guillem de Montgrí 38, L'Estartit",phone:"+34 972 75 08 80"},
+    matches:[{vs:"Knockout Round (if qualified)",time:"TBD",venue:"Check MIC app",addr:"Check MIC app for times and venues"}],
+    drives:[
+      {r:"Hotel Medes II → Girona city",t:"20 min"},
+      {r:"Hotel Medes II → Empúries ruins",t:"15 min"},
+      {r:"Hotel Medes II → Dalí Museum Figueres",t:"35 min"},
+    ],
+    rests:[
+      {n:"Can Sanchez ⭐4.7",d:"BOOK AHEAD · Fri–Sun only",a:"Avinguda Roma 48 · +34 972 75 03 32"},
+      {n:"Les Corones ⭐4.5",d:"Michelin-listed · Fri–Sun only",a:"Avinguda Roma 50 · +34 681 21 08 41"},
+      {n:"Corb Marí ⭐4.7",d:"Walk-ins welcome",a:"Passeig Molinet 7"},
+    ],
+    items:[
+      {time:"7:00am",col:"#6b7280",t:"Breakfast — Hotel Medes II",s:""},
+      {time:"TBD",col:"#c0392b",t:"MATCH — Knockout Round if qualified",s:"Check MIC app for times and venues"},
+      {time:"TBD",col:"#1e7e34",t:"FREE TIME — Lunch at Hotel Medes II",s:"Team arranged"},
+      {time:"",col:"#1e7e34",t:"FREE TIME — Costa Brava options",s:"Girona 20min · Empúries 15min · Dalí Museum 35min"},
+      {time:"9:00pm",col:"#c0392b",t:"Atlético vs FC Barcelona — La Liga!",s:"Watch in any local bar — incredible atmosphere"},
+      {time:"",col:"#6b7280",t:"Dinner",s:"Can Sanchez · Les Corones · Corb Marí"},
+    ]
+  },
+  {
+    num:"Day 8",date:"Sun 5 Apr",title:"Last Day + Girona FC",
+    stripe:"#c0392b",pills:[{c:"pill-m",l:"Knockouts?"},{c:"pill-m",l:"Girona FC"},{c:"pill-h",l:"Hotel 1"}],
+    warn:"CHECKOUT 8:30am SHARP — pack tonight! Girona FC vs Villarreal 6pm · Book tickets: seatpick.com",
+    hotel:{name:"→ Hotel Flora Park",addr:"Av. de la Constitució 44, Castelldefels — check-in 12:30pm",phone:"+34 936 36 19 90"},
+    matches:[
+      {vs:"Knockout Round (if qualified)",time:"TBD",venue:"Check MIC app",addr:""},
+      {vs:"Girona FC vs Villarreal — La Liga",time:"6:00pm",venue:"Estadi Municipal de Montilivi",addr:"Girona · tickets from $71 at seatpick.com"},
+    ],
+    drives:[
+      {r:"Hotel Medes II → Hotel Flora Park",t:"1hr 40min"},
+      {r:"Hotel Flora Park → Girona stadium",t:"1hr"},
+    ],
+    rests:[
+      {n:"Ananda Beach House ⭐4.5",d:"Celebratory lunch",a:"Pg. Marítim 45, Castelldefels"},
+      {n:"Barba Rossa Beach Bar ⭐4.4",d:"Final dinner — Joey-friendly",a:"Pg. Marítim 209, Castelldefels"},
+    ],
+    items:[
+      {time:"7:00am",col:"#6b7280",t:"Last breakfast — Hotel Medes II",s:"Pack tonight — checkout 8:30am sharp"},
+      {time:"8:30am",col:"#7c3aed",t:"CHECKOUT Hotel Medes II",s:"Don't leave anything behind!"},
+      {time:"9:00am",col:"#1a3a6b",t:"Bus/drive to Barcelona",s:"Drive independently — 1hr 40min via AP-7"},
+      {time:"12:30pm",col:"#7c3aed",t:"Check-in Hotel Flora Park",s:"Castelldefels"},
+      {time:"1:00pm",col:"#1e7e34",t:"FREE TIME — Lunch at Hotel Flora Park",s:"Celebratory — team arranged"},
+      {time:"2:00pm",col:"#1e7e34",t:"FREE TIME — Barcelona",s:"Last afternoon in Spain!"},
+      {time:"4:30pm",col:"#1a3a6b",t:"Drive to Girona",s:"1hr · allow extra for Easter Sunday traffic"},
+      {time:"6:00pm",col:"#c0392b",t:"GIRONA FC vs VILLARREAL — La Liga",s:"Estadi Municipal de Montilivi"},
+      {time:"8:00pm",col:"#6b7280",t:"Dinner — Hotel Flora Park",s:"Team arranged"},
+    ]
+  },
+  {
+    num:"Day 9",date:"Mon 6 Apr",title:"DEPARTURE DAY",
+    stripe:"#1a3a6b",pills:[{c:"pill-t",l:"Fly home"},{c:"pill-w",l:"4am start!"}],
+    warn:"VERY EARLY — Wake 4:00am · Car drop-off 5:40am · Everything packed from last night",
+    hotel:null,
+    matches:[],
+    drives:[{r:"Hotel Flora Park → Barcelona Airport T1",t:"15 min"}],
+    rests:[{n:"Barcelona Airport T1 — Airside",d:"Plenty of options after security",a:"Terminal 1"}],
+    items:[
+      {time:"4:00am",col:"#d97706",t:"WAKE UP",s:"Everything packed from last night"},
+      {time:"4:45am",col:"#1a3a6b",t:"Depart Hotel Flora Park",s:"15 mins to T1"},
+      {time:"5:00am",col:"#1a3a6b",t:"Refuel rental car",s:"Fill up BEFORE airport · keep receipt!"},
+      {time:"5:40am",col:"#1a3a6b",t:"Return Avis rental car",s:"T1/T2 drop-off · photos before handing back"},
+      {time:"6:00am",col:"#1a3a6b",t:"Check-in & security — Barcelona T1",s:"90 mins before departure"},
+      {time:"7:40am",col:"#c0392b",t:"BA0487 Barcelona → London Heathrow T5",s:"Arrives 9:10am · UK eGates — fast!"},
+      {time:"10:30am",col:"#c0392b",t:"BA0283 London Heathrow → LAX",s:"Arrives 1:45pm"},
+      {time:"1:45pm",col:"#1e7e34",t:"WELCOME HOME! 🎉",s:"Joey: US passport at LAX · Matt: show Green Card"},
+    ]
+  },
+];
+
+let currentPage='overview';
+let currentDay=0;
+
+function showPage(page){
+  ['overview','schedule','contacts'].forEach(p=>{
+    document.getElementById('page-'+p).style.display=p===page?'block':'none';
+    document.getElementById('bnav-'+p).classList.toggle('active',p===page);
+  });
+  document.getElementById('dayTabs').style.display=page==='schedule'?'flex':'none';
+  currentPage=page;
+  document.querySelector('.scroll-area').scrollTop=0;
+}
+
+function showDay(i){
+  document.querySelectorAll('.day-view').forEach((d,idx)=>d.classList.toggle('active',idx===i));
+  document.querySelectorAll('.tab').forEach((t,idx)=>t.classList.toggle('active',idx===i));
+  currentDay=i;
+  document.querySelector('.scroll-area').scrollTop=0;
+}
+
+function goToDay(i){
+  showPage('schedule');
+  setTimeout(()=>showDay(i),50);
+}
+
+function buildOverview(){
+  const list=document.getElementById('overviewList');
+  DAYS.forEach((d,i)=>{
+    const pillsHtml=d.pills.map(p=>`<span class="pill ${p.c}">${p.l}</span>`).join('');
+    const div=document.createElement('div');
+    div.className='overview-day';
+    div.style.borderLeftColor=d.stripe;
+    div.innerHTML=`
+      <div class="ov-date">${d.date}</div>
+      <div class="ov-content">
+        <div class="ov-title"><strong>${d.num}</strong> — ${d.title}</div>
+        <div class="ov-pills">${pillsHtml}</div>
+      </div>
+      <div class="ov-arrow">›</div>`;
+    div.onclick=()=>goToDay(i);
+    list.appendChild(div);
+  });
+}
+
+function buildDays(){
+  DAYS.forEach((d,i)=>{
+    const el=document.getElementById('day'+i);
+    let html='';
+    html+=`<div style="padding:14px 0 4px"><div style="font-size:12px;color:var(--text3);font-weight:600;letter-spacing:.5px;text-transform:uppercase">${d.num}</div><div style="font-size:20px;font-weight:700;color:var(--text);letter-spacing:-.3px;margin-top:2px">${d.title}</div><div style="font-size:13px;color:var(--text2);margin-top:2px">${d.date}</div></div>`;
+    if(d.warn) html+=`<div class="warn-banner"><span class="wi">⚠️</span><span>${d.warn}</span></div>`;
+    if(d.matches.length){
+      html+=`<div class="section-label">Match${d.matches.length>1?'es':''}</div>`;
+      d.matches.forEach(m=>{
+        html+=`<div class="match-card"><div class="match-vs">⚽ Match</div><div class="match-teams">${m.vs}</div><div class="match-meta">${m.time}${m.venue?' · '+m.venue:''}<br>${m.addr}</div></div>`;
+      });
+    }
+    html+=`<div class="section-label">Schedule</div>`;
+    d.items.forEach(it=>{
+      html+=`<div class="sched-item"><span class="sched-time">${it.time}</span><span class="sched-dot" style="background:${it.col}"></span><div class="sched-content"><div class="sched-title">${it.t}</div>${it.s?`<div class="sched-sub">${it.s}</div>`:''}</div></div>`;
+    });
+    if(d.drives.length){
+      html+=`<div class="section-label">Driving</div>`;
+      d.drives.forEach(dr=>{
+        html+=`<div class="drive-card"><span class="drive-route">${dr.r}</span><span class="drive-time">${dr.t}</span></div>`;
+      });
+    }
+    if(d.rests.length){
+      html+=`<div class="section-label">Food & Restaurants</div>`;
+      d.rests.forEach(r=>{
+        html+=`<div class="rest-card"><div class="rest-name">${r.n}</div><div class="rest-desc">${r.d}</div><div class="rest-addr">${r.a}</div></div>`;
+      });
+    }
+    if(d.hotel){
+      html+=`<div class="section-label">Hotel Tonight</div>`;
+      html+=`<div class="hotel-card"><div class="hotel-icon">🏨</div><div><div class="hotel-name">${d.hotel.name}</div><div class="hotel-addr">${d.hotel.addr}</div><div class="hotel-phone">${d.hotel.phone}</div></div></div>`;
+    }
+    el.innerHTML=html;
+  });
+}
+
+buildOverview();
+buildDays();
+</script>
+</body>
+</html>
